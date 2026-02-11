@@ -1,23 +1,20 @@
 package com.example.backend
 
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.RequestParam
 
 @Service
 class TodoService(
     private val repository: TodoRepository
 ) {
 
-    fun addTodo(
-        request: TodoCreateRequest
-    ) : TodoResponse {
-
+    fun add(request: TodoCreateRequest) : TodoResponse {
         val todo = Todo(
             title = request.title,
             completed = false
             )
-        repository.save(todo)
-        return todo.toResponse()
+        val savedTodo = repository.save(todo)
+        return savedTodo.toResponse()
+
     }
 
     fun updateTodo(
@@ -41,7 +38,6 @@ class TodoService(
 
 
     fun getAllTodos(
-        @RequestParam(required = false)
         completed : Boolean?
     ) : List<TodoResponse>{
         val todos = if (completed != null){
