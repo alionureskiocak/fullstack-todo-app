@@ -15,8 +15,8 @@ class Todo(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id : Long? = null,
-    val title : String = "",
-    val completed : Boolean = false,
+    var title : String = "",
+    var completed : Boolean = false,
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
