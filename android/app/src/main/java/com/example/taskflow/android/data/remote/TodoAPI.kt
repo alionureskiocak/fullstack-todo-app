@@ -34,6 +34,6 @@ interface TodoAPI {
     @DELETE("/api/todos/{id}")
     suspend fun deleteTodo(
         @Path("id") id : Long
-    ) : TodoResponse
+    )
 
 }
