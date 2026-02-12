@@ -8,9 +8,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,8 +27,13 @@ class TodoViewModel @Inject constructor(
     private val _state = MutableStateFlow<TodoState>(TodoState())
     val state : StateFlow<TodoState> = _state.asStateFlow()
 
+    init {
+        getTodos()
+    }
+
     fun onEvent(event : TodoEvent){
         when(event){
+            is TodoEvent.OnGetTodos -> getTodos()
             is TodoEvent.OnAddClick -> createTodo(event.title)
             is TodoEvent.OnUpdateClick -> updateTodo(event.todo)
             is TodoEvent.OnDeleteClick -> deleteTodo(event.todo)
@@ -36,46 +43,51 @@ class TodoViewModel @Inject constructor(
     }
 
     fun handleTitleChanged(title : String){
-        val todo = _state.value.currentTodo
-        todo.title = title
-        _state.value = _state.value.copy(
-            currentTodo = todo
-        )
+       _state.value = _state.value.copy(
+           currentTodo = _state.value.currentTodo.copy(
+               title = title
+           )
+       )
     }
 
-    fun handleCheckedChanged(checked : Boolean){
-        val todo = _state.value.currentTodo
-        todo.completed = checked
+    fun handleCheckedChanged(checked: Boolean) {
         _state.value = _state.value.copy(
-            currentTodo = todo
-        )
-    }
-
-
-    fun getTodos(completed : Boolean?) {
-        viewModelScope.launch {
-            val todos = repository.getTodos(completed)
-            _state.value = _state.value.copy(
-                todos = todos
+            currentTodo = _state.value.currentTodo.copy(
+                completed = checked
             )
+        )
+    }
+
+
+
+    fun getTodos() {
+        viewModelScope.launch {
+            repository.getTodos(null).collect {
+                _state.value = _state.value.copy(
+                    todos = it
+                )
+            }
         }
     }
 
     fun createTodo(title : String){
         viewModelScope.launch {
             repository.createTodo(title)
+            getTodos()
         }
     }
 
     fun updateTodo(todo : TodoItem){
         viewModelScope.launch {
             repository.updateTodo(todo.id,todo.title,todo.completed)
+            getTodos()
         }
     }
 
     fun deleteTodo(todo : TodoItem){
         viewModelScope.launch {
             repository.deleteTodo(todo.id)
+            getTodos()
         }
     }
 
@@ -83,7 +95,7 @@ class TodoViewModel @Inject constructor(
 
 
 data class TodoState(
-    val todos : List<TodoItem> = listOf<TodoItem>(),
+    val todos : List<TodoItem> = emptyList(),
     val currentTodo : TodoItem = TodoItem(
         id = -1,
         title = "",

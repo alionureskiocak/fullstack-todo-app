@@ -16,7 +16,7 @@ interface TodoAPI {
 
 
     @GET("/api/todos")
-    fun getTodos(
+    suspend fun getTodos(
         @Query("completed") completed : Boolean?
     ) : List<TodoResponse>
 

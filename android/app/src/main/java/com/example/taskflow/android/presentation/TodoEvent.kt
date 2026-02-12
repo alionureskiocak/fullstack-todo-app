@@ -4,6 +4,8 @@ import com.example.taskflow.android.domain.model.TodoItem
 
 sealed interface TodoEvent {
 
+    data class OnGetTodos(val completed : Boolean?) : TodoEvent
+
     data class OnAddClick(val title : String) : TodoEvent
     data class OnUpdateClick(val todo : TodoItem): TodoEvent
     data class OnDeleteClick(val todo : TodoItem): TodoEvent

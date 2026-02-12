@@ -7,14 +7,17 @@ import com.example.taskflow.android.data.remote.dto.TodoUpdateRequest
 import com.example.taskflow.android.domain.model.TodoItem
 import com.example.taskflow.android.domain.repository.TodoRepository
 import dagger.hilt.android.scopes.ViewModelScoped
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 @ViewModelScoped
 class TodoRepositoryImpl @Inject constructor(
     private val api : TodoAPI
 ) : TodoRepository{
-    override suspend fun getTodos(completed : Boolean?): List<TodoItem> {
-        return api.getTodos(completed).map{ it.toDomain() }
+
+    override  fun getTodos(completed : Boolean?): Flow<List<TodoItem>> =flow{
+        emit(api.getTodos(completed).map { it.toDomain() })
     }
 
     override suspend fun createTodo(title: String): TodoItem {
