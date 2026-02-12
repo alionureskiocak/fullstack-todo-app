@@ -12,6 +12,13 @@ fun TodoResponse.toDomain() : TodoItem{
     )
 }
 
+fun TodoResponse.toEntity() : TodoEntity {
+    return TodoEntity(
+        id = id,
+        title = title,
+        completed = completed
+    )
+}
 fun TodoItem.toResponse() : TodoResponse{
     return TodoResponse(
         id = id,

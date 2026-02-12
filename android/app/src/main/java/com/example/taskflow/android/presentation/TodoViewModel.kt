@@ -8,11 +8,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,8 +27,14 @@ class TodoViewModel @Inject constructor(
 
     init {
         getTodos()
+        refresh()
     }
 
+     fun refresh() {
+        viewModelScope.launch {
+           repository.refreshTodos(null)
+        }
+    }
     fun onEvent(event : TodoEvent){
         when(event){
             is TodoEvent.OnGetTodos -> getTodos()
@@ -62,7 +66,7 @@ class TodoViewModel @Inject constructor(
 
     fun getTodos() {
         viewModelScope.launch {
-            repository.getTodos(null).collect {
+            repository.getTodosFromRoom(null).collect {
                 _state.value = _state.value.copy(
                     todos = it
                 )
@@ -73,21 +77,18 @@ class TodoViewModel @Inject constructor(
     fun createTodo(title : String){
         viewModelScope.launch {
             repository.createTodo(title)
-            getTodos()
         }
     }
 
     fun updateTodo(todo : TodoItem){
         viewModelScope.launch {
             repository.updateTodo(todo.id,todo.title,todo.completed)
-            getTodos()
         }
     }
 
     fun deleteTodo(todo : TodoItem){
         viewModelScope.launch {
             repository.deleteTodo(todo.id)
-            getTodos()
         }
     }
 

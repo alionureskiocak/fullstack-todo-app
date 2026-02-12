@@ -1,5 +1,6 @@
 package com.example.taskflow.android.data.di
 
+import com.example.taskflow.android.data.local.TodoDao
 import com.example.taskflow.android.data.remote.TodoAPI
 import com.example.taskflow.android.data.repository.TodoRepositoryImpl
 import com.example.taskflow.android.domain.repository.TodoRepository
@@ -13,7 +14,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppModule {
+object ApiModule {
 
     @Provides
     @Singleton
@@ -27,7 +28,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideTodoRepository(api : TodoAPI) : TodoRepository{
-        return TodoRepositoryImpl(api)
+    fun provideTodoRepository(api : TodoAPI,dao : TodoDao) : TodoRepository{
+        return TodoRepositoryImpl(api,dao)
     }
 }
