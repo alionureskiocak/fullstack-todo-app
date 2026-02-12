@@ -1,6 +1,6 @@
 package com.example.taskflow.android.data.mappers
 
-import com.example.taskflow.android.data.local.TodoEntity
+import com.example.taskflow.android.data.local.model.TodoEntity
 import com.example.taskflow.android.data.remote.dto.TodoResponse
 import com.example.taskflow.android.domain.model.TodoItem
 
