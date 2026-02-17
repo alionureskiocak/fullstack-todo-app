@@ -12,4 +12,7 @@ sealed interface TodoEvent {
 
     data class OnTitleChanged(val title : String): TodoEvent
     data class OnCheckedChanged(val checked : Boolean): TodoEvent
+
+    data object OnTodoAddClicked : TodoEvent
+    data object OnDialogDismiss : TodoEvent
 }

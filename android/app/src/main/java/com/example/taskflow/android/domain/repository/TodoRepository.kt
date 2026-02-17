@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface TodoRepository {
 
-     fun getTodosFromRoom(completed : Boolean?) : Flow<List<TodoItem>>
+    fun getTodosFromRoom(completed : Boolean?) : Flow<List<TodoItem>>
     suspend fun refreshTodos(completed: Boolean?)
     suspend fun createTodo(title : String) : TodoItem
     suspend fun updateTodo(id : Long, title : String, completed : Boolean) : TodoItem

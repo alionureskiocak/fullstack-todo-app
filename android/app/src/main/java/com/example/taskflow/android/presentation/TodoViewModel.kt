@@ -2,6 +2,9 @@ package com.example.taskflow.android.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.taskflow.android.data.local.TodoDao
+import com.example.taskflow.android.data.remote.TodoAPI
+import com.example.taskflow.android.data.repository.TodoRepositoryImpl
 import com.example.taskflow.android.domain.model.TodoItem
 import com.example.taskflow.android.domain.repository.TodoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -43,6 +46,16 @@ class TodoViewModel @Inject constructor(
             is TodoEvent.OnDeleteClick -> deleteTodo(event.todo)
             is TodoEvent.OnTitleChanged -> handleTitleChanged(event.title)
             is TodoEvent.OnCheckedChanged -> handleCheckedChanged(event.checked)
+            is TodoEvent.OnTodoAddClicked -> {
+                _state.value = _state.value.copy(
+                    showAddDialog = true
+                )
+            }
+            is TodoEvent.OnDialogDismiss -> {
+                _state.value = _state.value.copy(
+                    showAddDialog = false
+                )
+            }
         }
     }
 
@@ -61,8 +74,6 @@ class TodoViewModel @Inject constructor(
             )
         )
     }
-
-
 
     fun getTodos() {
         viewModelScope.launch {
@@ -87,11 +98,12 @@ class TodoViewModel @Inject constructor(
     }
 
     fun deleteTodo(todo : TodoItem){
+
+
         viewModelScope.launch {
             repository.deleteTodo(todo.id)
         }
     }
-
 }
 
 
@@ -101,5 +113,6 @@ data class TodoState(
         id = -1,
         title = "",
         completed = false
-    )
+    ),
+    val showAddDialog : Boolean = false
 )

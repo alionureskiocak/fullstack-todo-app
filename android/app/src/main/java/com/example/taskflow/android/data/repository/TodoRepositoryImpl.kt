@@ -28,6 +28,7 @@ class TodoRepositoryImpl @Inject constructor(
     }
 
     override suspend fun refreshTodos(completed : Boolean?){
+
         try {
             val remoteTodos = api.getTodos(completed)
             dao.deleteTodos()
